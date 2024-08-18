@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Res, NotFoundException } from '@nestjs/common';
 import { Response } from 'express';
 import { CreateMessageDto } from './dtos/create-message.dto';
 import { MessagesService } from './messages.service';
@@ -14,13 +14,13 @@ export class MessagesController {
 	@Get()
 	async getAll(@Res() res: Response) {
 		const messages = await this.messagesService.findAll()
-		console.log("🚀 ~ MessagesController ~ getAll ~ messages:", messages)
 		return res.status(HttpStatus.OK).json(messages)
 	}
 	
 	@Get('/:id')
 	async getOne(@Param('id') id: string, @Res() res: Response) {
 		const message = await this.messagesService.findeOne(id)
+		if(!message) throw new NotFoundException('Aucun message trouvé')
 		return res.status(HttpStatus.OK).json(message)
 	}
 
