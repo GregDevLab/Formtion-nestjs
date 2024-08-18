@@ -5,11 +5,7 @@ import { MessagesService } from './messages.service';
 
 @Controller('messages')
 export class MessagesController {
-	messagesService: MessagesService
-	//TODO : Utiliser l'injection de dépendances de NestJS
-	constructor() {
-		this.messagesService = new MessagesService()
-	}
+	constructor(public messagesService: MessagesService) {}
 
 	@Get()
 	async getAll(@Res() res: Response) {
