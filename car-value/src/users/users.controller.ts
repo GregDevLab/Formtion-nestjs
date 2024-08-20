@@ -3,7 +3,8 @@ import { UsersService } from './users.service';
 import { User } from '@prisma/client';
 import { UsersQueryDto } from './dtos/users-query.dto';
 import { UpdateUserDto } from './dtos/user-update.dto';
-import { SerializeInterceptor } from 'src/interceptors/serialize.interceptor';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { UserDto } from './dtos/user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -17,7 +18,7 @@ export class UsersController {
 		return await this.userService.findMany(query)
 	}
 
-	@UseInterceptors(SerializeInterceptor)
+	@Serialize(UserDto)
 	@Get('/:id')
 	@HttpCode(HttpStatus.OK)
 	async getUser(@Param('id') id: string): Promise<User>{
