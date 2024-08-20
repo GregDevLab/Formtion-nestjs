@@ -6,8 +6,11 @@ import { PrismaService } from "src/prisma.service";
 export class UsersRepository {
 	constructor(private prisma: PrismaService) {}
 
-	async findUnique(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
+	async findUnique(userWhereUniqueInput: Prisma.UserWhereUniqueInput, unsafe?:boolean): Promise<User | null> {
 		return this.prisma.user.findUnique({
+			omit:{
+				password: !unsafe
+			},
 			where: userWhereUniqueInput,
 		});
 	}

@@ -12,5 +12,4 @@ export class UsersController {
 	async getUser(@Param('id') id: string): Promise<User>{
 		return await this.userService.getUniqueUser({id: Number(id)})
 	}
-
 }
