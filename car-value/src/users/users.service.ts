@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { UsersQueryDto } from './dtos/users-query.dto';
+import { UpdateUserDto } from './dtos/user-update.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,13 +24,53 @@ export class UsersService {
 		const userWhere = {
 			...userData
 		}
-		
+
 		const user = await this.usersRepository.findFirst(userWhere)
 		return user
 	}
 
+	async findMany(query: UsersQueryDto):Promise<{
+        users: User[];
+        count: number;
+        pageSize: number;
+        totalPages: number;
+    }> {
+		const { page, pageSize, orderBy, email } = query;
+
+		const params = {
+			skip : (page - 1) * pageSize,
+			take : pageSize,
+			orderBy: orderBy ? { [orderBy]: 'asc' } : undefined,
+			where: {
+				email: email ? { contains: email } : undefined
+			}
+		};
+		const datas = await this.usersRepository.findMany(params)
+		return datas
+	}
+
 	async create(userData:Prisma.UserCreateInput) {
 		const user = await this.usersRepository.create(userData)
+		return user
+	}
+
+	async deleteUser(id:string) {
+		const user = await this.usersRepository.delete(id)
+		return user
+	}
+
+	async updateUser(id:string, updateDto:UpdateUserDto) {
+
+		const updateInput = {
+			where: {
+				id :Number(id)
+			},
+			data: {
+				...updateDto
+			}
+		}
+
+		const user = await this.usersRepository.update(updateInput)
 		return user
 	}
 }
