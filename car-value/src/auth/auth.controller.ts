@@ -1,8 +1,8 @@
-import { Body, ConflictException, Controller, HttpCode, HttpStatus, InternalServerErrorException, Post, Res } from '@nestjs/common';
+import { Body, ConflictException, Controller, HttpCode, HttpStatus, InternalServerErrorException, Post, Res, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dtos/signup-dto';
-import { Response } from 'express';
 import { User } from '@prisma/client';
+import { PasswordHashInterceptor } from 'src/interceptors/password-hash.interceptor';
 
 
 @Controller('auth')
@@ -11,6 +11,7 @@ export class AuthController {
 
 	@Post('/signup')
 	@HttpCode(HttpStatus.CREATED)
+	@UseInterceptors(PasswordHashInterceptor)
 	async signup(@Body() body:SignupDto):Promise<Omit<User, 'password'> | null> {
 		try {
 			const user = await this.authService.signup({...body})

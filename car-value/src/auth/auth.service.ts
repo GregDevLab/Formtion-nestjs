@@ -7,15 +7,7 @@ export class AuthService {
 	constructor(private usersService:UsersService){}
 
 	async signup(userData:Prisma.UserCreateInput):Promise<Omit<User, 'password'> | null>  {
-
-		const password = await this.hashPassword(userData.password)
-
-		const data = {
-			...userData,
-			password
-		}
-
-		const user = await this.usersService.create(data)
+		const user = await this.usersService.create(userData)
 		return user
 	}
 
